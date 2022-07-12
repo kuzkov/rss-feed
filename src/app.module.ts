@@ -5,6 +5,7 @@ import { TelegrafModule } from 'nestjs-telegraf';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BotService } from './bot.service';
+import { ChannelModule } from './channel/channel.module';
 import configuration, { EnvironmentVariables } from './configuration';
 
 @Module({
@@ -26,6 +27,7 @@ import configuration, { EnvironmentVariables } from './configuration';
         };
       },
     }),
+    ChannelModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService, BotService],
