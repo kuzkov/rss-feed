@@ -4,7 +4,7 @@ import * as Joi from 'joi';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BotService } from './bot.service';
+import { BotModule } from './bot/bot.module';
 import configuration, { EnvironmentVariables } from './configuration';
 
 @Module({
@@ -20,14 +20,13 @@ import configuration, { EnvironmentVariables } from './configuration';
     }),
     TelegrafModule.forRootAsync({
       inject: [ConfigService],
-      useFactory(configService: ConfigService<EnvironmentVariables>) {
-        return {
-          token: configService.get('telegram.botToken', { infer: true }),
-        };
-      },
+      useFactory: (configService: ConfigService<EnvironmentVariables>) => ({
+        token: configService.get('telegram.botToken', { infer: true }),
+      }),
     }),
+    BotModule,
   ],
   controllers: [AppController],
-  providers: [AppService, BotService],
+  providers: [AppService],
 })
 export class AppModule {}
