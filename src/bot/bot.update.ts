@@ -1,9 +1,10 @@
 import { Ctx, Hears, Help, On, Start, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
-import { ChannelService } from './channel/channel.service';
+
+import { ChannelService } from 'src/channel/channel.service';
 
 @Update()
-export class BotService {
+export class BotUpdate {
   constructor(private channelService: ChannelService) {}
 
   @Start()
@@ -28,6 +29,12 @@ export class BotService {
 
   @Hears('Test')
   async sendTest() {
-    this.channelService.sendMessage(new Date().toUTCString());
+    this.channelService.postMessage({
+      title: 'Hello',
+      date: new Date(),
+      author: 'Author',
+      text: new Date().toUTCString(),
+      href: 'https://www.google.com',
+    });
   }
 }

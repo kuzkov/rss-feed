@@ -1,21 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { EnvironmentVariables } from 'src/configuration';
-import { Telegram } from 'telegraf';
-import { TELEGRAM_BOT } from './channel.module';
+import { ConfigType } from '@nestjs/config';
+import { InjectBot } from 'nestjs-telegraf';
+import { Context, Telegraf } from 'telegraf';
+
+import telegramConfig from 'src/config/telegram.config';
+import { PostMessage } from './models/post-message.model';
 
 @Injectable()
 export class ChannelService {
-  private readonly channelId: string;
-
   constructor(
-    @Inject(TELEGRAM_BOT) private readonly telegramBot: Telegram,
-    configService: ConfigService<EnvironmentVariables>,
-  ) {
-    this.channelId = configService.get('telegram.channelId', { infer: true });
-  }
+    @InjectBot() private bot: Telegraf<Context>,
+    @Inject(telegramConfig.KEY)
+    private tgConfig: ConfigType<typeof telegramConfig>,
+  ) {}
 
-  sendMessage(text: string) {
-    return this.telegramBot.sendMessage(this.channelId, text);
+  async postMessage({ text }: PostMessage) {
+    await this.bot.telegram.sendMessage(this.tgConfig.channelId, text);
   }
 }
