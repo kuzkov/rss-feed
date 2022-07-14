@@ -15,6 +15,7 @@ export class ChannelService {
   ) {}
 
   async postMessage({ text }: PostMessage) {
+    console.log(text);
     await this.bot.telegram.sendMessage(this.tgConfig.channelId, text);
   }
 }
