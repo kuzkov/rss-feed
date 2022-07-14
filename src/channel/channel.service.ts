@@ -5,6 +5,7 @@ import { InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 
 import telegramConfig from 'src/config/telegram.config';
+import { RssService } from './../rss/rss.service';
 import { PostMessage } from './models/post-message.model';
 
 @Injectable()
@@ -13,7 +14,18 @@ export class ChannelService {
     @InjectBot() private bot: Telegraf<Context>,
     @Inject(telegramConfig.KEY)
     private tgConfig: ConfigType<typeof telegramConfig>,
-  ) {}
+    private rssService: RssService,
+  ) {
+    this.rssService.posts$.subscribe((post) => {
+      this.postMessage({
+        title: post.title,
+        text: post.content,
+        author: post.creator,
+        date: new Date(post.pubDate),
+        href: '',
+      });
+    });
+  }
 
   async postMessage(post: PostMessage) {
     await this.bot.telegram.sendMessage(

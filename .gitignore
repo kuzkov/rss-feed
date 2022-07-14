@@ -37,4 +37,4 @@ lerna-debug.log*
 # env
 .env
 
-/rss-storage
+/file-storage
