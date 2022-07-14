@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { ChannelModule } from 'src/channel/channel.module';
+import { RssModule } from 'src/rss/rss.module';
 import { BotUpdate } from './bot.update';
 
 @Module({
-  imports: [ChannelModule],
+  imports: [RssModule],
   providers: [BotUpdate],
 })
 export class BotModule {}
