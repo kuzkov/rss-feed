@@ -5,7 +5,8 @@ import { Observable, Subject } from 'rxjs';
 
 import { FileStorageService } from './../core/file-storage.service';
 
-export const PARSE_INTERVAL = 10000;
+export const PARSE_INTERVAL = 60 * 1000;
+export const RETRY_INTERVAL = 2 * 60 * 1000;
 
 export type ParseResult = {
   [key: string]: any;
@@ -29,24 +30,24 @@ export class RssService {
   private rssFeedList: Array<RssListItem> = [];
 
   constructor(private fileStorage: FileStorageService) {
-    // this.subscribe(
-    //   'Whitehouse',
-    //   'https://www.whitehouse.gov/briefing-room/feed/',
-    // );
+    this.subscribe(
+      'Whitehouse',
+      'https://www.whitehouse.gov/briefing-room/feed/',
+    );
 
     this.subscribe('Kremlin', 'http://kremlin.ru/events/all/feed');
 
-    // this.subscribe(
-    //   'UN',
-    //   'https://news.un.org/feed/subscribe/ru/news/region/europe/feed/rss.xml',
-    // );
+    this.subscribe(
+      'UN',
+      'https://news.un.org/feed/subscribe/ru/news/region/europe/feed/rss.xml',
+    );
 
-    // this.subscribe('Гос дума', 'http://duma.gov.ru/news/duma/feed/');
+    this.subscribe('Гос дума', 'http://duma.gov.ru/news/duma/feed/');
 
-    // this.subscribe(
-    //   'Презедент Украины',
-    //   'https://www.president.gov.ua/ru/rss/news/all.rss',
-    // );
+    this.subscribe(
+      'Презедент Украины',
+      'https://www.president.gov.ua/ru/rss/news/all.rss',
+    );
   }
 
   subscribe(name: string, link: string) {
@@ -93,7 +94,7 @@ export class RssService {
 
         setTimeout(() => {
           this.startParsingWithInterval(rssFeed, retry + 1);
-        }, 1000);
+        }, retry * RETRY_INTERVAL);
       }
     }, PARSE_INTERVAL);
   }
@@ -102,7 +103,14 @@ export class RssService {
   private async fetchNewPosts(name: string, link: string): Promise<Array<any>> {
     console.log(`Start fetching new rss: ${name}`);
 
-    const parser = new Parser({ timeout: PARSE_INTERVAL });
+    const parser = new Parser({
+      timeout: PARSE_INTERVAL,
+      requestOptions: {
+        headers: {
+          Connection: 'keep-alive',
+        },
+      },
+    });
     const rss = await parser.parseURL(link);
     const previousRss = await this.fileStorage.get<ParseResult>(name);
 
