@@ -29,10 +29,24 @@ export class RssService {
   private rssFeedList: Array<RssListItem> = [];
 
   constructor(private fileStorage: FileStorageService) {
-    this.subscribe(
-      'Whitehouse',
-      'https://www.whitehouse.gov/briefing-room/feed/',
-    );
+    // this.subscribe(
+    //   'Whitehouse',
+    //   'https://www.whitehouse.gov/briefing-room/feed/',
+    // );
+
+    this.subscribe('Kremlin', 'http://kremlin.ru/events/all/feed');
+
+    // this.subscribe(
+    //   'UN',
+    //   'https://news.un.org/feed/subscribe/ru/news/region/europe/feed/rss.xml',
+    // );
+
+    // this.subscribe('Гос дума', 'http://duma.gov.ru/news/duma/feed/');
+
+    // this.subscribe(
+    //   'Презедент Украины',
+    //   'https://www.president.gov.ua/ru/rss/news/all.rss',
+    // );
   }
 
   subscribe(name: string, link: string) {
@@ -60,7 +74,9 @@ export class RssService {
     return this.rssFeedList;
   }
 
-  private startParsingWithInterval(rssFeed: RssListItem) {
+  private startParsingWithInterval(rssFeed: RssListItem, retry = 1) {
+    if (retry > 3) return;
+
     if (!some(this.rssFeedList, rssFeed)) return;
 
     const { name, link } = rssFeed;
@@ -69,11 +85,15 @@ export class RssService {
       try {
         const posts = await this.fetchNewPosts(name, link);
         posts.forEach((post) => this.posts.next(post));
-        this.startParsingWithInterval(rssFeed);
+        this.startParsingWithInterval(rssFeed, 1);
       } catch (error) {
         rssFeed.failed = true;
         console.error(error);
         console.log(this.rssFeedList);
+
+        setTimeout(() => {
+          this.startParsingWithInterval(rssFeed, retry + 1);
+        }, 1000);
       }
     }, PARSE_INTERVAL);
   }
@@ -82,7 +102,7 @@ export class RssService {
   private async fetchNewPosts(name: string, link: string): Promise<Array<any>> {
     console.log(`Start fetching new rss: ${name}`);
 
-    const parser = new Parser();
+    const parser = new Parser({ timeout: PARSE_INTERVAL });
     const rss = await parser.parseURL(link);
     const previousRss = await this.fileStorage.get<ParseResult>(name);
 

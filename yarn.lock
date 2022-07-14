@@ -1029,6 +1029,11 @@
   resolved "https://registry.npmjs.org/@types/cookiejar/-/cookiejar-2.1.2.tgz"
   integrity sha512-t73xJJrvdTjXrn4jLS9VSGRbz0nUY3cl2DMGDU48lKl+HR9dbbjW2A9r3g40VA++mQpy6uuHg33gy7du2BKpog==
 
+"@types/ellipsize@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@types/ellipsize/-/ellipsize-0.1.1.tgz#e9ba8d19f46d97ae6e6d25a786cc397efde81ed9"
+  integrity sha512-MIOU8SHM4/q4Jjdy3FJS/ynSeBT4qb+aAn72ixOM1lkSDn+QXQKwrcgJFRJzq+AWRX/7I/LVRlo0b2DgNK6wLQ==
+
 "@types/eslint-scope@^3.7.3":
   version "3.7.4"
   resolved "https://registry.npmjs.org/@types/eslint-scope/-/eslint-scope-3.7.4.tgz"
@@ -2348,6 +2353,11 @@ electron-to-chromium@^1.4.172:
   version "1.4.186"
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.186.tgz"
   integrity sha512-YoVeFrGd/7ROjz4R9uPoND1K/hSRC/xADy9639ZmIZeJSaBnKdYx3I6LMPsY7CXLpK7JFgKQVzeZ/dk2br6Eaw==
+
+ellipsize@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/ellipsize/-/ellipsize-0.5.1.tgz#2ac8bba69b2190d629cc5065a9c2bf28d99f237e"
+  integrity sha512-0jEAyuIRU6U8MN0S5yUqIrkK/AQWkChh642N3zQuGV57s9bsUWYLc0jJOoDIUkZ2sbEL3ySq8xfq71BvG4q3hw==
 
 emittery@^0.10.2:
   version "0.10.2"

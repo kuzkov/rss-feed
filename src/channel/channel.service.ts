@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import mdEscape from 'markdown-escape';
+import ellipsize from 'ellipsize';
 import { InjectBot } from 'nestjs-telegraf';
 import { concatMap, ignoreElements, startWith, timer } from 'rxjs';
 import { Context, Telegraf } from 'telegraf';
@@ -11,6 +11,8 @@ import { PostMessage } from './models/post-message.model';
 
 @Injectable()
 export class ChannelService {
+  private readonly MESSAGE_DELAY = 3500;
+
   constructor(
     @InjectBot() private bot: Telegraf<Context>,
     @Inject(telegramConfig.KEY)
@@ -20,16 +22,16 @@ export class ChannelService {
     this.rssService.posts$
       .pipe(
         concatMap((value) =>
-          timer(2000).pipe(ignoreElements(), startWith(value)),
+          timer(this.MESSAGE_DELAY).pipe(ignoreElements(), startWith(value)),
         ),
       )
       .subscribe((post) => {
         this.postMessage({
           title: post.title,
-          text: post.content,
+          text: ellipsize(post.contentSnippet, 500),
           author: post.creator,
           date: new Date(post.pubDate),
-          href: '',
+          href: post.link,
         });
       });
   }
@@ -44,9 +46,9 @@ export class ChannelService {
 
   private formatMessage({ title, text, author, date, href }: PostMessage) {
     return (
-      `*${mdEscape(title)}*\n` +
-      `${mdEscape(text)}\n` +
-      `_${mdEscape(author)} - ${mdEscape(date.toUTCString())}_\n\n` +
+      `*${title}*\n` +
+      `${text}\n` +
+      `_${author} - ${date.toUTCString()}_\n\n` +
       `${href}`
     );
   }
