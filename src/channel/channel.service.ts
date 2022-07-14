@@ -27,7 +27,7 @@ export class ChannelService {
     return (
       `*${mdEscape(title)}*\n` +
       `${mdEscape(text)}\n` +
-      `_${mdEscape(author)} - ${mdEscape('date')}_\n\n` +
+      `_${mdEscape(author)} - ${mdEscape(date.toUTCString())}_\n\n` +
       `${href}`
     );
   }
