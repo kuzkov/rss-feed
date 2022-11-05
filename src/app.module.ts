@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
+import { BotModule } from './bot/bot.module';
+import { ChannelModule } from './channel/channel.module';
+import { CoreModule } from './core/core.module';
+import { RssModule } from './rss/rss.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [CoreModule, ChannelModule, BotModule, RssModule],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
